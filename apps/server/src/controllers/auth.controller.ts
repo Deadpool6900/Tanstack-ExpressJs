@@ -20,7 +20,7 @@ type SignupTypes = z.infer<typeof signupSchema>;
 
 export const sigupfn = async (
 	req: Request<{}, {}, SignupTypes>,
-	res: Response,
+	res: Response
 ) => {
 	const parsedData = signupSchema.safeParse(req.body);
 	if (!parsedData.success) {
@@ -28,7 +28,7 @@ export const sigupfn = async (
 			400,
 			"Validation failed",
 			"VALIDATION_ERROR",
-			parsedData.error.issues,
+			parsedData.error.issues
 		);
 	}
 	// check user exits
@@ -46,12 +46,15 @@ export const sigupfn = async (
 		password: hashPWD,
 	};
 	// db 👇
-	await prisma.user.create({
+	const createdUser = await prisma.user.create({
 		data: user,
 	});
 	//jwt shit 👇
 	const t = generateAuthToken(user, res);
-	return res.status(200).json(t);
+	return res.status(200).json({
+		user: createdUser,
+		token: t.token,
+	});
 };
 //---------------------------------------------------------------------------------------------------
 const loginSchema = z.object({
@@ -62,7 +65,7 @@ type loginType = z.infer<typeof loginSchema>;
 
 export const loginfn = async (
 	req: Request<{}, {}, loginType>,
-	res: Response,
+	res: Response
 ) => {
 	const parsedData = loginSchema.safeParse(req.body);
 	if (!parsedData.success) {
@@ -70,7 +73,7 @@ export const loginfn = async (
 			400,
 			"Validation failed",
 			"VALIDATION_ERROR",
-			parsedData.error.issues,
+			parsedData.error.issues
 		);
 	}
 	// if user exits :
@@ -89,7 +92,10 @@ export const loginfn = async (
 
 	//jwt shit 👇
 	const t = generateAuthToken(user, res);
-	return res.status(200).json(t);
+	return res.status(200).json({
+		user: user,
+		token: t.token,
+	});
 };
 //---------------------------------------------------------------------------------------------------
 export const logout = async (req: Request, res: Response) => {
@@ -126,7 +132,7 @@ type resetPasswordType = z.infer<typeof resetPasswordSchema>;
 
 export const ResetPassword = async (
 	req: Request<{}, {}, resetPasswordType>,
-	res: Response,
+	res: Response
 ) => {
 	const decodedUser = await getUserDataFromCookies(req);
 	const usr = await prisma.user.findUnique({
@@ -141,7 +147,7 @@ export const ResetPassword = async (
 			400,
 			"Validation failed",
 			"VALIDATION_ERROR",
-			parsedData.error.issues,
+			parsedData.error.issues
 		);
 	}
 
@@ -151,7 +157,7 @@ export const ResetPassword = async (
 		throw new ApiError(
 			401,
 			"Current password is incorrect",
-			"INVALID_CREDENTIALS",
+			"INVALID_CREDENTIALS"
 		);
 	}
 
@@ -177,7 +183,7 @@ type forgotPwdType = z.infer<typeof forgotPwdSchema>;
 
 export const ForgotPassword = async (
 	req: Request<{}, {}, forgotPwdType>,
-	res: Response,
+	res: Response
 ) => {
 	const parsedData = forgotPwdSchema.safeParse(req.body);
 	if (!parsedData.success) {
@@ -185,7 +191,7 @@ export const ForgotPassword = async (
 			400,
 			"Validation failed",
 			"VALIDATION_ERROR",
-			parsedData.error.issues,
+			parsedData.error.issues
 		);
 	}
 	const usr = await prisma.user.findUnique({
@@ -224,7 +230,7 @@ type ResetPwdWithTokenType = z.infer<typeof resetPwdWithToken>;
 
 export const resetPasswordWithToken = async (
 	req: Request<{}, {}, ResetPwdWithTokenType>,
-	res: Response,
+	res: Response
 ) => {
 	const parsedData = resetPwdWithToken.safeParse(req.body);
 	if (!parsedData.success) {
@@ -232,7 +238,7 @@ export const resetPasswordWithToken = async (
 			400,
 			"Validation failed",
 			"VALIDATION_ERROR",
-			parsedData.error.issues,
+			parsedData.error.issues
 		);
 	}
 	const { token, newPassword } = parsedData.data;

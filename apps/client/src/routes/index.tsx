@@ -1,14 +1,29 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { Button } from '@/components/ui/button'
+import { createFileRoute } from "@tanstack/react-router";
+import {
+	Navbar,
+	Hero,
+	Features,
+	Footer,
+	Testimonials,
+	Pricing,
+} from "@/components/blocks/landingpage.blocks";
 
-export const Route = createFileRoute('/')({
-  component: App,
-})
+export const Route = createFileRoute("/")({
+	component: App,
+	loader: ({ context }) => {
+		console.log(context.auth);
+	},
+});
 
 function App() {
-  return (
-    <div className="bg-gray-700 h-screen w-screen flex items-center justify-center">
-      <Button> Click ME </Button>
-    </div>
-  )
+	return (
+		<div className="min-h-screen bg-white text-gray-900">
+			<Navbar />
+			<Hero />
+			<Features />
+			<Testimonials />
+			<Pricing />
+			<Footer />
+		</div>
+	);
 }
