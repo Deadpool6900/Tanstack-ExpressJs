@@ -1,4 +1,5 @@
 import { useAuth } from "@/auth";
+import { Sidebar } from "@/components/layout/Sidebar";
 import { Button } from "@/components/ui/button";
 import axiosInstance from "@/lib/axios";
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
@@ -35,12 +36,15 @@ function RouteComponent() {
 		}
 	};
 	return (
-		<div className="h-screen w-screen flex flex-col justify-center items-center gap-4">
-			<h1>Welcome to the Home Page</h1>
+		<div className="flex">
+			<Sidebar />
+			<main  className="flex items-center justify-center p-4 flex-1 flex-col">
+				<h1>Welcome to the Home Page</h1>
 
-			<Button variant="destructive" onClick={handleLogout}>
-				Logout
-			</Button>
+				<Button variant="destructive" onClick={handleLogout}>
+					Logout
+				</Button>
+			</main>
 		</div>
 	);
 }
