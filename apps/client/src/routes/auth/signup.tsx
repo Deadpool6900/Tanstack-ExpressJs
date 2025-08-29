@@ -44,7 +44,7 @@ function SignupComponent() {
 			password: "",
 		},
 	});
-	const {login} = useAuth();
+	const { login } = useAuth();
 
 	// ---------------------------------------------------------------------------------
 	const onSubmit: SubmitHandler<FormType> = async (data) => {

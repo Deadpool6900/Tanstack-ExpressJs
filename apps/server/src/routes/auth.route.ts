@@ -18,11 +18,11 @@ export { r as authRouter };
 r.post("/signup", asyncHandler(sigupfn));
 r.post("/login", asyncHandler(loginfn));
 r.post("/logout", authMiddleware, asyncHandler(logout));
-r.post("/deleteAccount", authMiddleware, asyncHandler(deleteAccount));
+r.delete("/deleteAccount", authMiddleware, asyncHandler(deleteAccount));
 r.post("/resetPassword", authMiddleware, asyncHandler(ResetPassword));
 r.post("/forgotPassword", authMiddleware, asyncHandler(ForgotPassword));
 r.post(
 	"/resetPasswordWithToken",
 	authMiddleware,
-	asyncHandler(resetPasswordWithToken),
+	asyncHandler(resetPasswordWithToken)
 );

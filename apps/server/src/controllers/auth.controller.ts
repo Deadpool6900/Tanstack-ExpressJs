@@ -108,12 +108,15 @@ export const logout = async (req: Request, res: Response) => {
 };
 //---------------------------------------------------------------------------------------------------
 export const deleteAccount = async (req: Request, res: Response) => {
-	const decoded = await getUserDataFromCookies(req);
+	const decoded = req.user;
+	if (!decoded) {
+		throw new ApiError(401, "Unauthorized", "UNAUTHORIZED");
+	}
 
-	const usr = await prisma.user.findUnique({
-		where: { email: decoded.email },
+	const user = await prisma.user.findUnique({
+		where: { email: decoded?.email },
 	});
-	if (!usr) {
+	if (!user) {
 		throw new ApiError(404, "User not found", "USER_NOT_FOUND");
 	}
 	await prisma.user.delete({ where: { email: decoded.email } });

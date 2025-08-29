@@ -1,45 +1,128 @@
-import { Home, LineChart, Settings, UserRound } from "lucide-react";
-import { useMemo } from "react";
-import { Button } from "../ui/button";
-import logo from "@/templet logo.svg";
-import { Avatar, AvatarImage } from "../ui/avatar";
-export const Sidebar = () => {
-	const items = useMemo(
-		() => [
-			{ icon: Home, label: "Home" },
-			{ icon: UserRound, label: "Profile" },
-			{ icon: LineChart, label: "Analytics" },
-			{ icon: Settings, label: "Settings" },
-		],
-		[]
-	);
+import { ArchiveX, Command, File, Inbox, Send, Trash2 } from "lucide-react";
+
+import {
+	Sidebar,
+	SidebarContent,
+	SidebarFooter,
+	SidebarGroup,
+	SidebarGroupContent,
+	SidebarHeader,
+	SidebarMenu,
+	SidebarMenuButton,
+	SidebarMenuItem,
+	useSidebar,
+} from "@/components/ui/sidebar";
+import { Link } from "@tanstack/react-router";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { useState } from "react";
+import logo from '@/templet logo.svg';
+
+const data = {
+	user: {
+		name: "shad cn",
+		email: "m@example.com",
+		avatar: null,
+	},
+	navMain: [
+		{
+			title: "Inbox",
+			url: "#",
+			icon: Inbox,
+			isActive: true,
+		},
+		{
+			title: "Drafts",
+			url: "#",
+			icon: File,
+			isActive: false,
+		},
+		{
+			title: "Sent",
+			url: "#",
+			icon: Send,
+			isActive: false,
+		},
+		{
+			title: "Junk",
+			url: "#",
+			icon: ArchiveX,
+			isActive: false,
+		},
+		{
+			title: "Trash",
+			url: "#",
+			icon: Trash2,
+			isActive: false,
+		},
+	],
+};
+
+export function AppSidebar() {
+	// Note: I'm using state to show active item.
+	// IRL you should use the url/router.
+	const [activeItem, setActiveItem] = useState(data.navMain[0]);
+	const { setOpen } = useSidebar();
 
 	return (
-		<aside className="sticky top-14 hidden h-screen w-12 shrink-0 flex-col items-center  border-r border-sidebar-border sm:flex">
-			<div className="h-12 w-12  border border-sidebar-border flex items-center justify-center">
-				<div className=" border border-sidebar-border rounded-sm ">
-					<img src={logo} alt="Logo" className="h-5 w-5 m-1.5 " />
-				</div>
-			</div>
-			<div className="flex flex-col space-y-4 pt-3">
-				{items.map(({ icon: Icon, label }) => (
-					<button
-						key={label}
-						className="p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
-						aria-label={label}
+		<Sidebar collapsible="none" className="w-12 border border-r-border ">
+			<SidebarHeader className="w-full h-12 border-b border-b-border">
+				<SidebarMenu>
+					<SidebarMenuButton
+						size="lg"
+						asChild
+						className="h-8 p-0 flex items-center justify-center "
 					>
-						<Icon className="h-5 w-5 text-foreground/80" strokeWidth={1.5} />
-					</button>
-				))}
-			</div>
-			<div className="mt-auto mb-4 cursor-pointer">
-				<Avatar className="h-10 w-10 border border-sidebar-border">
-					<AvatarImage
-						src="https://i.redd.it/za03nj1evsc61.jpg"
-						className="object-cover"
-					/>
-				</Avatar>
-			</div>
-		</aside>
+						<Link to="/home">
+							<div className=" flex aspect-square size-6 items-center justify-center  ">
+								<img src={logo} alt="logo" />
+							</div>
+						</Link>
+					</SidebarMenuButton>
+				</SidebarMenu>
+			</SidebarHeader>
+			<SidebarContent>
+				<SidebarGroup>
+					<SidebarGroupContent>
+						<SidebarMenu>
+							{data.navMain.map((item) => (
+								<SidebarMenuItem key={item.title}>
+									<SidebarMenuButton
+										tooltip={{
+											children: item.title,
+											hidden: false,
+										}}
+										onClick={() => {
+											setActiveItem(item);
+											setOpen(true);
+										}}
+										isActive={activeItem?.title === item.title}
+										className="px-2"
+									>
+										<item.icon />
+									</SidebarMenuButton>
+								</SidebarMenuItem>
+							))}
+						</SidebarMenu>
+					</SidebarGroupContent>
+				</SidebarGroup>
+			</SidebarContent>
+			<SidebarFooter className="mb-4">
+				<Link to="/home/profile">
+					<Avatar className="cursor-pointer ">
+						{data.user.avatar ? (
+							<AvatarImage src={data.user.avatar} alt={data.user.name} />
+						) : (
+							<AvatarFallback className="bg-foreground/15">
+								{data.user.name
+									.split(" ")
+									.map((n) => n[0])
+									.join("")
+									.toUpperCase()}
+							</AvatarFallback>
+						)}
+					</Avatar>
+				</Link>
+			</SidebarFooter>
+		</Sidebar>
 	);
-};
+}
