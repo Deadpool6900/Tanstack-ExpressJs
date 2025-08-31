@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import logo from "@/templet logo.svg";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -75,12 +75,12 @@ function LoginComponent() {
 			</div>
 			<div className="flex flex-col gap-4 p-6 md:p-10">
 				<div className="flex justify-center gap-2 md:justify-start">
-					<a href="#" className="flex items-center gap-2 font-medium">
+					<Link to="/" className="flex items-center gap-2 font-medium">
 						<div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
 							<img src={logo} alt="logo" className="h-12 w-12" />
 						</div>
 						Form Weaver
-					</a>
+					</Link>
 				</div>
 				<div className="flex flex-1 items-center justify-center">
 					<div className="w-full max-w-xs">
@@ -147,9 +147,9 @@ function LoginComponent() {
 							</div>
 							<div className="text-center text-sm">
 								Don&apos;t have an account?{" "}
-								<a href="/auth/signup" className="underline underline-offset-4">
+								<Link to="/auth/signup" className="underline underline-offset-4">
 									Sign up
-								</a>
+								</Link>
 							</div>
 						</form>
 					</div>
@@ -159,8 +159,7 @@ function LoginComponent() {
 			<div
 				className={cn(
 					"min-h-screen bg-[size:16px_16px]",
-					"bg-[radial-gradient(var(--muted)_1px,transparent_1px)]",
-					"dark:bg-[radial-gradient(var(--foreground)_1px,transparent_1px)]"
+					"bg-[radial-gradient(var(--dots)_1px,transparent_1px)]"
 				)}
 			></div>
 		</div>

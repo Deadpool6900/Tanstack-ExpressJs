@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import logo from "@/templet logo.svg";
@@ -10,7 +10,9 @@ import { toast } from "sonner";
 import { AxiosError } from "axios";
 import { useAuth } from "@/auth";
 import { loginResSchema } from "@repo/types/responses";
-import {signupSchema, type signupTypes} from "@repo/types/auth";
+import { signupSchema, type signupTypes } from "@repo/types/auth";
+import { cn } from "@/lib/utils";
+import { ModeToggle } from "@/components/blocks/theme-provider";
 
 export const Route = createFileRoute("/auth/signup")({
 	component: SignupComponent,
@@ -65,15 +67,18 @@ function SignupComponent() {
 	// ---------------------------------------------------------------------------------
 
 	return (
-		<div className="grid min-h-svh lg:grid-cols-2">
+		<div className="grid min-h-svh lg:grid-cols-2 relative">
+		<div className="absolute top-4 right-4">
+						<ModeToggle />
+					</div>
 			<div className="flex flex-col gap-4 p-6 md:p-10">
 				<div className="flex justify-center gap-2 md:justify-start">
-					<a href="#" className="flex items-center gap-2 font-medium">
+					<Link to="/" className="flex items-center gap-2 font-medium">
 						<div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
-							<img src={logo} alt="logo" className="h-12 w-12 bg-white" />
+							<img src={logo} alt="logo" className="h-12 w-12" />
 						</div>
 						Form Weaver
-					</a>
+					</Link>
 				</div>
 				<div className="flex flex-1 items-center justify-center">
 					<div className="w-full max-w-xs">
@@ -154,15 +159,20 @@ function SignupComponent() {
 							</div>
 							<div className="text-center text-sm">
 								Already have an Account ?
-								<a href="/auth/login" className="underline underline-offset-4">
+								<Link to="/auth/login" className="underline underline-offset-4">
 									login
-								</a>
+								</Link>
 							</div>
 						</form>
 					</div>
 				</div>
 			</div>
-			<div className=" relative hidden lg:block  inset-0 -z-10 h-full w-full bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]"></div>
+			<div
+				className={cn(
+					"min-h-screen bg-[size:16px_16px]",
+					"bg-[radial-gradient(var(--dots)_1px,transparent_1px)]"
+				)}
+			></div>
 		</div>
 	);
 }

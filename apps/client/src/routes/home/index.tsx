@@ -20,7 +20,9 @@ function RouteComponent() {
 			</SidebarProvider>
 			<div className="flex-1">
 				<Navbar />
-				
+				<div className="flex items-center justify-center w-full h-full">
+					<h5 className="text-4xl font-mono">Edit ./src/routes/index.tsx</h5>
+				</div>
 			</div>
 		</div>
 	);

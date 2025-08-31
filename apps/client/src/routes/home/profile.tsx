@@ -4,7 +4,11 @@ import { AppSidebar } from "@/components/layout/Sidebar";
 import { Button } from "@/components/ui/button";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import axiosInstance from "@/lib/axios";
-import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import {
+	createFileRoute,
+	redirect,
+	useNavigate,
+} from "@tanstack/react-router";
 import type { AxiosResponse } from "axios";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
@@ -24,7 +28,8 @@ import {
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import {resetPasswordSchema,type resetPasswordType} from '@repo/types/auth';
+import { resetPasswordSchema, type resetPasswordType } from "@repo/types/auth";
+import { type authResponse } from "@repo/types/responses";
 
 export const Route = createFileRoute("/home/profile")({
 	component: RouteComponent,
@@ -32,11 +37,13 @@ export const Route = createFileRoute("/home/profile")({
 		if (!context.auth.isAuthenticated) {
 			throw redirect({ to: "/auth/login", replace: true });
 		}
+		return { ...context.auth.user };
 	},
 });
 
-
 function RouteComponent() {
+	const user = Route.useRouteContext() as authResponse["user"];
+
 	const navigate = useNavigate();
 	const {
 		register,
@@ -117,19 +124,26 @@ function RouteComponent() {
 			</SidebarProvider>
 			<div className="flex-1">
 				<Navbar />
-				<div className="h-full w-full  ">
+				<div className="h-full w-full px-10 py-5 ">
 					<div className="grid grid-cols-1 lg:grid-cols-12 gap-">
 						<div className="lg:col-span-full">
 							<div className="rounded-2xl bg-gradient-to-b p-6 ">
 								<div className="flex items-start justify-between gap-6">
 									<div className="flex items-center gap-4">
 										<Avatar className="h-24 w-24 ring-2 ring-ring">
-											<AvatarImage src="/avatar.png" alt="avatar" />
-											<AvatarFallback>KK</AvatarFallback>
+											<AvatarImage src={user?.pfpUrl || ""} alt="avatar" />
+											<AvatarFallback>
+												{user?.username
+													.split(" ")
+													.map((name) => name[0])
+													.join("")}
+											</AvatarFallback>
 										</Avatar>
 										<div>
-											<h2 className="text-2xl font-semibold">Kedar_</h2>
-											<p className="text-sm text-slate-600">kedar123@test.io</p>
+											<h2 className="text-2xl font-semibold">
+												{user?.username}
+											</h2>
+											<p className="text-sm text-slate-600">{user?.email}</p>
 										</div>
 									</div>
 
@@ -151,8 +165,9 @@ function RouteComponent() {
 									<p className="text-sm text-slate-500">
 										Manage your account settings and preferences.
 									</p>
-{/* -------------------------------------------------------------------------------------------------- */}
-									<div className="mt-2 space-y-2 ">
+
+									{/* -------------------------------------------------------------------------------------------------- */}
+									<div className="mt-2 space-y-2 flex items-center justify-between  my-3 ">
 										<p className="">Logout from this device </p>
 										<Dialog>
 											<DialogTrigger asChild>
@@ -167,11 +182,11 @@ function RouteComponent() {
 											</DialogTrigger>
 											<DialogContent>
 												<DialogHeader>
-													<DialogTitle>Are you absolutely sure?</DialogTitle>
+													<DialogTitle>
+														Are you sure you want to logout?
+													</DialogTitle>
 													<DialogDescription>
-														This action cannot be undone. This will permanently
-														delete your account and remove your data from our
-														servers.
+														You’ll need to sign in again to access your account.
 													</DialogDescription>
 												</DialogHeader>
 												<DialogClose>
@@ -180,9 +195,9 @@ function RouteComponent() {
 											</DialogContent>
 										</Dialog>
 									</div>
-{/* -------------------------------------------------------------------------------------------------------- */}
+									{/* -------------------------------------------------------------------------------------------------------- */}
 
-									<div className="mt-2 space-y-2 ">
+									<div className="mt-2 space-y-2 flex items-center justify-between  my-3">
 										<p className="">Reset password</p>
 										<Dialog>
 											<DialogTrigger asChild>
@@ -241,9 +256,12 @@ function RouteComponent() {
 											</DialogContent>
 										</Dialog>
 									</div>
-{/* -------------------------------------------------------------------------------------------------------- */}
-									<div className="mt-2 space-y-2">
-										<p className="">Delete your account</p>
+
+									{/* -------------------------------------------------------------------------------------------------------- */}
+									<div className="mt-2 space-y-2 flex items-center justify-between  my-3">
+										<div className=" flex items-center justify-center gap-2 text-destructive">
+											<Trash2 size={20} strokeWidth={1} />
+											Delete your account</div>
 										<Dialog>
 											<DialogTrigger asChild>
 												<Button

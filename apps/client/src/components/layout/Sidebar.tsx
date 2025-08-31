@@ -1,4 +1,4 @@
-import { ArchiveX, Command, File, Inbox, Send, Trash2 } from "lucide-react";
+import { ArchiveX, File, Inbox, Send, Trash2 } from "lucide-react";
 
 import {
 	Sidebar,
@@ -64,7 +64,7 @@ export function AppSidebar() {
 	const { setOpen } = useSidebar();
 
 	return (
-		<Sidebar collapsible="none" className="w-12 border border-r-border ">
+		<Sidebar collapsible="none" className="w-12 border border-r-border  ">
 			<SidebarHeader className="w-full h-12 border-b border-b-border">
 				<SidebarMenu>
 					<SidebarMenuButton
@@ -106,7 +106,7 @@ export function AppSidebar() {
 					</SidebarGroupContent>
 				</SidebarGroup>
 			</SidebarContent>
-			<SidebarFooter className="mb-4">
+			<SidebarFooter className="mb-4 hover:bg-foreground/10 rounded-full flex items-center justify-center transition ">
 				<Link to="/home/profile">
 					<Avatar className="cursor-pointer ">
 						{data.user.avatar ? (
