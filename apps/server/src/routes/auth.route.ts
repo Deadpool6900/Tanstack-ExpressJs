@@ -6,7 +6,7 @@ import {
 	logout,
 	ResetPassword,
 	resetPasswordWithToken,
-	sigupfn,
+	signupfn,
 } from "../controllers/auth.controller";
 import { asyncHandler } from "../utils/helper";
 import { authMiddleware } from "../middleware/auth.middleware";
@@ -15,7 +15,7 @@ export { r as authRouter };
 
 // signup login logout change password forgot password
 
-r.post("/signup", asyncHandler(sigupfn));
+r.post("/signup", asyncHandler(signupfn));
 r.post("/login", asyncHandler(loginfn));
 r.post("/logout", authMiddleware, asyncHandler(logout));
 r.delete("/deleteAccount", authMiddleware, asyncHandler(deleteAccount));

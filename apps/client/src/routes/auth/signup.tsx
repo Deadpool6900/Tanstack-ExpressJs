@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
-import { z } from "zod";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import logo from "@/templet logo.svg";
@@ -10,7 +9,8 @@ import axiosInstance from "@/lib/axios";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
 import { useAuth } from "@/auth";
-import { loginResSchema } from "./login";
+import { loginResSchema } from "@repo/types/responses";
+import {signupSchema, type signupTypes} from "@repo/types/auth";
 
 export const Route = createFileRoute("/auth/signup")({
 	component: SignupComponent,
@@ -22,22 +22,14 @@ export const Route = createFileRoute("/auth/signup")({
 });
 // ---------------------------------------------------------------------------------
 
-const FormSchema = z.object({
-	username: z.string().min(3).max(50),
-	email: z.email(),
-	password: z.string().min(5).max(20),
-});
-type FormType = z.infer<typeof FormSchema>;
-// ---------------------------------------------------------------------------------
-
 function SignupComponent() {
 	const navigate = useNavigate();
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
-	} = useForm<FormType>({
-		resolver: zodResolver(FormSchema),
+	} = useForm<signupTypes>({
+		resolver: zodResolver(signupSchema),
 		defaultValues: {
 			username: "",
 			email: "",
@@ -45,9 +37,8 @@ function SignupComponent() {
 		},
 	});
 	const { login } = useAuth();
-
 	// ---------------------------------------------------------------------------------
-	const onSubmit: SubmitHandler<FormType> = async (data) => {
+	const onSubmit: SubmitHandler<signupTypes> = async (data) => {
 		try {
 			const res = await axiosInstance.post("/auth/signup", data);
 			const parsed = loginResSchema.safeParse(res.data);

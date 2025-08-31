@@ -21,10 +21,10 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { z } from "zod";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+import {resetPasswordSchema,type resetPasswordType} from '@repo/types/auth';
 
 export const Route = createFileRoute("/home/profile")({
 	component: RouteComponent,
@@ -35,12 +35,6 @@ export const Route = createFileRoute("/home/profile")({
 	},
 });
 
-const ResetPasswordSchema = z.object({
-	currentPwd: z.string().min(6).max(100),
-	newPwd: z.string().min(6).max(100),
-});
-
-type ResetPasswordType = z.infer<typeof ResetPasswordSchema>;
 
 function RouteComponent() {
 	const navigate = useNavigate();
@@ -48,8 +42,8 @@ function RouteComponent() {
 		register,
 		handleSubmit,
 		formState: { errors },
-	} = useForm<ResetPasswordType>({
-		resolver: zodResolver(ResetPasswordSchema),
+	} = useForm<resetPasswordType>({
+		resolver: zodResolver(resetPasswordSchema),
 		defaultValues: {
 			currentPwd: "",
 			newPwd: "",
@@ -75,7 +69,7 @@ function RouteComponent() {
 		}
 	};
 
-	const onSubmit: SubmitHandler<ResetPasswordType> = async (data) => {
+	const onSubmit: SubmitHandler<resetPasswordType> = async (data) => {
 		try {
 			const res: AxiosResponse = await axiosInstance.post(
 				"auth/resetPassword",
@@ -157,7 +151,7 @@ function RouteComponent() {
 									<p className="text-sm text-slate-500">
 										Manage your account settings and preferences.
 									</p>
-									{/* -------------------------------------------------------------------------------------------------- */}
+{/* -------------------------------------------------------------------------------------------------- */}
 									<div className="mt-2 space-y-2 ">
 										<p className="">Logout from this device </p>
 										<Dialog>
@@ -186,7 +180,7 @@ function RouteComponent() {
 											</DialogContent>
 										</Dialog>
 									</div>
-									{/* -------------------------------------------------------------------------------------------------------- */}
+{/* -------------------------------------------------------------------------------------------------------- */}
 
 									<div className="mt-2 space-y-2 ">
 										<p className="">Reset password</p>
@@ -247,8 +241,7 @@ function RouteComponent() {
 											</DialogContent>
 										</Dialog>
 									</div>
-									{/* -------------------------------------------------------------------------------------------------------- */}
-									{/* -------------------------------------------------------------------------------------------------------- */}
+{/* -------------------------------------------------------------------------------------------------------- */}
 									<div className="mt-2 space-y-2">
 										<p className="">Delete your account</p>
 										<Dialog>

@@ -3,7 +3,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import logo from "@/templet logo.svg";
-import { z } from "zod";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axiosInstance from "@/lib/axios";
@@ -11,8 +10,11 @@ import { toast } from "sonner";
 import { AxiosError } from "axios";
 import { useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/auth";
-import { authResponseSchema } from "@/lib/utils";
+import { loginResSchema } from "@repo/types/responses";
+import { loginSchema, type loginType } from "@repo/types/auth";
+import { ModeToggle } from "@/components/blocks/theme-provider";
 
+import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/auth/login")({
 	component: LoginComponent,
 	beforeLoad: ({ context }) => {
@@ -21,28 +23,16 @@ export const Route = createFileRoute("/auth/login")({
 		}
 	},
 });
-// ---------------------------------------------------------------------------------
-const FormSchema = z.object({
-	email: z.email(),
-	password: z.string().min(5).max(20),
-});
-type FormType = z.infer<typeof FormSchema>;
-// ---------------------------------------------------------------------------------
-export const loginResSchema  = z.object({
-	user : authResponseSchema.shape.user,
-	token: z.string(),
-});
-export type loginResType = z.infer<typeof loginResSchema>;
-// ---------------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------------
 function LoginComponent() {
 	const navigate = useNavigate();
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
-	} = useForm<FormType>({
-		resolver: zodResolver(FormSchema),
+	} = useForm<loginType>({
+		resolver: zodResolver(loginSchema),
 		defaultValues: {
 			email: "",
 			password: "",
@@ -51,16 +41,16 @@ function LoginComponent() {
 
 	const { login } = useAuth();
 
-	const onSubmit: SubmitHandler<FormType> = async (data) => {
+	const onSubmit: SubmitHandler<loginType> = async (data) => {
 		try {
 			const res = await axiosInstance.post("/auth/login", data);
 			const parsed = loginResSchema.safeParse(res.data);
-			console.log(parsed);
+			// console.log(parsed);
 			if (!parsed.success) {
 				toast.error("Invalid response from server.");
 				return;
 			}
-			console.log(parsed.data);
+			// console.log(parsed.data);
 			login(parsed.data.user, parsed.data.token);
 			toast.success("Login successful!");
 			navigate({ to: "/home", replace: true });
@@ -79,12 +69,15 @@ function LoginComponent() {
 	// ---------------------------------------------------------------------------------
 
 	return (
-		<div className="grid min-h-svh lg:grid-cols-2">
+		<div className="grid min-h-svh lg:grid-cols-2 relative">
+			<div className="absolute top-4 right-4">
+				<ModeToggle />
+			</div>
 			<div className="flex flex-col gap-4 p-6 md:p-10">
 				<div className="flex justify-center gap-2 md:justify-start">
 					<a href="#" className="flex items-center gap-2 font-medium">
 						<div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
-							<img src={logo} alt="logo" className="h-12 w-12 bg-white" />
+							<img src={logo} alt="logo" className="h-12 w-12" />
 						</div>
 						Form Weaver
 					</a>
@@ -163,7 +156,13 @@ function LoginComponent() {
 				</div>
 			</div>
 			{/* right side  */}
-			<div className=" relative hidden lg:block  inset-0 -z-10 h-full w-full bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]"></div>
+			<div
+				className={cn(
+					"min-h-screen bg-[size:16px_16px]",
+					"bg-[radial-gradient(var(--muted)_1px,transparent_1px)]",
+					"dark:bg-[radial-gradient(var(--foreground)_1px,transparent_1px)]"
+				)}
+			></div>
 		</div>
 	);
 }

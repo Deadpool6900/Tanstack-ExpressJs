@@ -11,15 +11,22 @@ import prisma from "../utils/prisma";
 import { sendForgotPwdMail } from "../utils/emailHandler";
 import crypto from "node:crypto";
 
-const signupSchema = z.object({
-	username: z.string().trim().min(3, "Username must be at least 3 characters"),
-	email: z.email("Invalid email address"),
-	password: z.string().min(6, "Password must be at least 6 characters"),
-});
-type SignupTypes = z.infer<typeof signupSchema>;
+import {
+	signupSchema,
+	type signupTypes,
+	loginSchema,
+	type loginType,
+	resetPasswordSchema,
+	type resetPasswordType,
+	resetPwdWithToken,
+	type resetPwdWithTokenType,
+	forgotPwdSchema,
+	type forgotPwdType,
+} from "@repo/types/auth";
 
-export const sigupfn = async (
-	req: Request<{}, {}, SignupTypes>,
+//---------------------------------------------------------------------------------------------------
+export const signupfn = async (
+	req: Request<{}, {}, signupTypes>,
 	res: Response
 ) => {
 	const parsedData = signupSchema.safeParse(req.body);
@@ -40,7 +47,7 @@ export const sigupfn = async (
 	}
 
 	const hashPWD = await hashMe(parsedData.data.password);
-	const user: SignupTypes = {
+	const user: signupTypes = {
 		username: parsedData.data.username,
 		email: parsedData.data.email,
 		password: hashPWD,
@@ -57,12 +64,6 @@ export const sigupfn = async (
 	});
 };
 //---------------------------------------------------------------------------------------------------
-const loginSchema = z.object({
-	email: z.email("Invalid email address"),
-	password: z.string().min(6, "Password must be at least 6 characters"),
-});
-type loginType = z.infer<typeof loginSchema>;
-
 export const loginfn = async (
 	req: Request<{}, {}, loginType>,
 	res: Response
@@ -127,12 +128,6 @@ export const deleteAccount = async (req: Request, res: Response) => {
 	});
 };
 //---------------------------------------------------------------------------------------------------
-const resetPasswordSchema = z.object({
-	currentPwd: z.string().min(6, "Password must be at least 6 characters"),
-	newPwd: z.string().min(6, "Password must be at least 6 characters"),
-});
-type resetPasswordType = z.infer<typeof resetPasswordSchema>;
-
 export const ResetPassword = async (
 	req: Request<{}, {}, resetPasswordType>,
 	res: Response
@@ -179,11 +174,6 @@ export const ResetPassword = async (
 	});
 };
 //---------------------------------------------------------------------------------------------------
-const forgotPwdSchema = z.object({
-	email: z.email(),
-});
-type forgotPwdType = z.infer<typeof forgotPwdSchema>;
-
 export const ForgotPassword = async (
 	req: Request<{}, {}, forgotPwdType>,
 	res: Response
@@ -225,14 +215,8 @@ export const ForgotPassword = async (
 	});
 };
 //---------------------------------------------------------------------------------------------------
-const resetPwdWithToken = z.object({
-	token: z.string().min(1, "Reset token is required"),
-	newPassword: z.string().min(6, "Password must be at least 6 characters"),
-});
-type ResetPwdWithTokenType = z.infer<typeof resetPwdWithToken>;
-
 export const resetPasswordWithToken = async (
-	req: Request<{}, {}, ResetPwdWithTokenType>,
+	req: Request<{}, {}, resetPwdWithTokenType>,
 	res: Response
 ) => {
 	const parsedData = resetPwdWithToken.safeParse(req.body);

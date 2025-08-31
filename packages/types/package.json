@@ -1,0 +1,19 @@
+{
+  "name": "@repo/types",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "exports": {
+    "./auth": "./src/auth.types.ts",
+    "./responses": "./src/responses.types.ts"
+  },
+  "dependencies": {
+    "zod": "^4.1.5"
+  }
+}

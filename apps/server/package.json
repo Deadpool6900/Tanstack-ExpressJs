@@ -8,6 +8,7 @@
 		"test": "vitest"
 	},
 	"devDependencies": {
+		"@repo/types": "workspace:*",
 		"@biomejs/biome": "2.2.2",
 		"@types/bun": "latest",
 		"@types/cookie-parser": "^1.4.9",
