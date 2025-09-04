@@ -1,12 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
 import {
-	Navbar,
-	Hero,
 	Features,
 	Footer,
-	Testimonials,
+	Hero,
+	Navbar,
 	Pricing,
+	Testimonials,
 } from "@/components/blocks/landingpage.blocks";
+import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
 	component: App,

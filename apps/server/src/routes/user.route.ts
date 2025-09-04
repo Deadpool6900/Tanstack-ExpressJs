@@ -1,7 +1,8 @@
 import { Router } from "express";
-import { asyncHandler } from "../utils/helper";
 import { getUserData, UpdateUsername } from "../controllers/user.controller";
 import { authMiddleware } from "../middleware/auth.middleware";
+import { asyncHandler } from "../utils/helper";
+
 const r = Router();
 export { r as userRouter };
 

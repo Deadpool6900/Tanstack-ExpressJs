@@ -1,26 +1,26 @@
-import express, {
-	json,
-	urlencoded,
-	type Request,
-	type Response,
-} from "express";
+// FIX THIS SHIT 👇
+import type { User as PrismaUser } from "@prisma/client";
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import { config } from "dotenv";
-import { authRouter } from "./routes/auth.route";
-import cookieParser from "cookie-parser";
-import { errorMiddleware } from "./middleware/Error.middleware";
+import express, {
+	json,
+	type Request,
+	type Response,
+	urlencoded,
+} from "express";
+import session from "express-session";
 import jwt from "jsonwebtoken";
-// FIX THIS SHIT 👇
-import { type User as PrismaUser } from "@prisma/client";
-import { userRouter } from "./routes/user.route";
 import passport from "passport";
 import {
 	Strategy as GoogleStrategy,
 	type Profile,
 } from "passport-google-oauth20";
+import { errorMiddleware } from "./middleware/Error.middleware";
+import { authRouter } from "./routes/auth.route";
+import { userRouter } from "./routes/user.route";
 import prisma from "./utils/prisma";
-import session from "express-session";
-import { generateAuthToken } from "./utils/helper";
+
 declare global {
 	namespace Express {
 		interface User extends PrismaUser {}
@@ -36,7 +36,7 @@ app.use(
 	cors({
 		origin: "http://localhost:3000",
 		credentials: true,
-	})
+	}),
 );
 app.use(json());
 app.use(
@@ -49,7 +49,7 @@ app.use(
 			secure: false, // set true in production with HTTPS
 			sameSite: "lax",
 		},
-	})
+	}),
 );
 // Initialize passport
 app.use(passport.initialize());
@@ -108,11 +108,9 @@ passport.use(
 			} catch (err) {
 				return done(err as Error, undefined);
 			}
-		}
-	)
+		},
+	),
 );
-
-
 
 app.use("/auth", authRouter);
 app.use("/user", userRouter);
@@ -122,7 +120,7 @@ app.listen(5001, () =>
 	console.log(
 		"app is running on",
 		"\x1b[31m%s\x1b[0m",
-		" http://localhost:5001"
-	)
+		" http://localhost:5001",
+	),
 );
 // that regex is for cool color

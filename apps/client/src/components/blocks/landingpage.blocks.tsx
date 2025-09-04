@@ -1,18 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { motion } from "motion/react";
 import {
-	Sparkles,
-	Layout,
-	Plug,
+	ArrowRight,
 	BarChart3,
 	Check,
-	ArrowRight,
+	Layout,
+	Plug,
 	Quote,
+	Sparkles,
 } from "lucide-react";
+import { motion } from "motion/react";
+import type React from "react";
+import { useEffect, useState } from "react";
 
-// ---- Utility: basic container & section wrappers ----
-import { type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
+// ---- Utility: basic container & section wrappers ----
+import type { ReactNode } from "react";
 
 type ContainerProps = {
 	className?: string;
@@ -92,7 +93,8 @@ export const Navbar: React.FC = () => (
 				</a>
 			</nav>
 			<div className="flex items-center gap-3">
-				<Link to="/auth/login"
+				<Link
+					to="/auth/login"
 					href="#login"
 					className="hidden rounded-xl px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 md:block"
 				>
@@ -132,7 +134,8 @@ export const Hero: React.FC = () => (
 					place.
 				</p>
 				<div className="mt-8 flex flex-wrap items-center gap-3">
-					<Link to="/home"
+					<Link
+						to="/home"
 						className="group inline-flex items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 via-violet-600 to-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-200/40 hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 					>
 						Get Started Free
@@ -263,7 +266,7 @@ export const Testimonials: React.FC = () => {
 	useEffect(() => {
 		const id = setInterval(
 			() => setIndex((i) => (i + 1) % testimonials.length),
-			5000
+			5000,
 		);
 		return () => clearInterval(id);
 	}, []);
@@ -522,9 +525,7 @@ export const Footer: React.FC = () => (
 			</div>
 		</Container>
 		<Container className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-gray-200 pt-6 text-xs text-gray-500 sm:flex-row">
-			<p>
-				© {new Date().getFullYear()} Form Weaver, Inc. All rights reserved.
-			</p>
+			<p>© {new Date().getFullYear()} Form Weaver, Inc. All rights reserved.</p>
 			<div className="flex items-center gap-4">
 				<a href="#privacy" className="hover:text-gray-700">
 					Privacy

@@ -12,17 +12,13 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from "@/components/ui/sidebar";
+import logo from "@/templet logo.svg";
 import { Link } from "@tanstack/react-router";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useState } from "react";
-import logo from '@/templet logo.svg';
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import type { authResponse } from "@repo/types/responses";
 
 const data = {
-	user: {
-		name: "shad cn",
-		email: "m@example.com",
-		avatar: null,
-	},
 	navMain: [
 		{
 			title: "Inbox",
@@ -57,7 +53,9 @@ const data = {
 	],
 };
 
-export function AppSidebar() {
+export function AppSidebar({ userdata }: { userdata: authResponse["user"] }) {
+	const user = userdata;
+
 	// Note: I'm using state to show active item.
 	// IRL you should use the url/router.
 	const [activeItem, setActiveItem] = useState(data.navMain[0]);
@@ -109,12 +107,12 @@ export function AppSidebar() {
 			<SidebarFooter className="mb-4 hover:bg-foreground/10 rounded-full flex items-center justify-center transition ">
 				<Link to="/home/profile">
 					<Avatar className="cursor-pointer ">
-						{data.user.avatar ? (
-							<AvatarImage src={data.user.avatar} alt={data.user.name} />
+						{user?.pfpUrl ? (
+							<AvatarImage src={user.pfpUrl} alt={user.username} />
 						) : (
 							<AvatarFallback className="bg-foreground/15">
-								{data.user.name
-									.split(" ")
+								{user?.username && user?.username
+									.split("")
 									.map((n) => n[0])
 									.join("")
 									.toUpperCase()}

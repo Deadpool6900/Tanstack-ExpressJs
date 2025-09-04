@@ -1,17 +1,8 @@
 import { useAuth } from "@/auth";
 import { Navbar } from "@/components/layout/Navbar";
 import { AppSidebar } from "@/components/layout/Sidebar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import axiosInstance from "@/lib/axios";
-import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
-import type { AxiosResponse } from "axios";
-import { toast } from "sonner";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Pencil, LogOut, LockKeyholeOpen, Trash2 } from "lucide-react";
 import {
 	Dialog,
 	DialogClose,
@@ -21,11 +12,20 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import axiosInstance from "@/lib/axios";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
 import { resetPasswordSchema, type resetPasswordType } from "@repo/types/auth";
-import { type authResponse } from "@repo/types/responses";
+import type { authResponse } from "@repo/types/responses";
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import type { AxiosResponse } from "axios";
+import { LockKeyholeOpen, LogOut, Pencil, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { type SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/home/profile")({
 	component: RouteComponent,
@@ -79,7 +79,7 @@ function RouteComponent() {
 				{
 					currentPwd: data.currentPwd,
 					newPwd: data.newPwd,
-				}
+				},
 			);
 
 			if (res.status == 200) {
@@ -98,7 +98,7 @@ function RouteComponent() {
 	const handleDeleteAccount = async () => {
 		try {
 			const res: AxiosResponse = await axiosInstance.delete(
-				"/auth/deleteAccount"
+				"/auth/deleteAccount",
 			);
 
 			if (res.status == 200) {
@@ -117,7 +117,7 @@ function RouteComponent() {
 	return (
 		<div className="flex ">
 			<SidebarProvider className="hidden sm:flex w-12 transition-all duration-300 sticky top-0 left-0">
-				<AppSidebar />
+				<AppSidebar userdata={user} />
 			</SidebarProvider>
 			<div className="flex-1">
 				<Navbar />

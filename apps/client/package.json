@@ -9,8 +9,9 @@
     "serve": "vite preview",
     "test": "vitest run",
     "format": "biome format",
-    "lint": "biome lint",
-    "check": "biome check"
+    "check": "biome check",
+    "lint": "bunx biome check",
+		"lint:fix": "bunx biome check --write"
   },
   "dependencies": {
     "@repo/types" : "workspace:*",

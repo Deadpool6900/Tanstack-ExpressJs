@@ -5,7 +5,9 @@
 	"private": true,
 	"scripts": {
 		"dev": "bun --watch run src/index.ts",
-		"test": "vitest"
+		"test": "vitest",
+		"lint": "bunx biome check",
+		"lint:fix": "bunx biome check --write"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.2.2",

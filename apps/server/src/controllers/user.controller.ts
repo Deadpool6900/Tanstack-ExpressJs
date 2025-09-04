@@ -1,8 +1,7 @@
 import type { Request, Response } from "express";
 import z from "zod";
-import { getUserDataFromCookies } from "../utils/helper";
-import prisma from "../utils/prisma";
 import { ApiError } from "../utils/ApiError";
+import prisma from "../utils/prisma";
 //-----------------------------------------------------------------------------------------
 export const getUserData = async (req: Request, res: Response) => {
 	const user = req.user;

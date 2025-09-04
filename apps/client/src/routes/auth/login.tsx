@@ -1,18 +1,18 @@
+import { useAuth } from "@/auth";
+import { ModeToggle } from "@/components/blocks/theme-provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import logo from "@/templet logo.svg";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import axiosInstance from "@/lib/axios";
-import { toast } from "sonner";
-import { AxiosError } from "axios";
-import { useNavigate } from "@tanstack/react-router";
-import { useAuth } from "@/auth";
-import { loginResSchema } from "@repo/types/responses";
+import logo from "@/templet logo.svg";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type loginType } from "@repo/types/auth";
-import { ModeToggle } from "@/components/blocks/theme-provider";
+import { loginResSchema } from "@repo/types/responses";
+import { Link, createFileRoute, redirect } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
+import { AxiosError } from "axios";
+import { type SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/auth/login")({
@@ -168,7 +168,7 @@ function LoginComponent() {
 				className={cn(
 					"min-h-screen bg-[size:16px_16px]",
 					"bg-[radial-gradient(var(--dots)_1px,transparent_1px)]",
-					"hidden md:flex"
+					"hidden md:flex",
 				)}
 			></div>
 		</div>

@@ -1,9 +1,9 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/auth";
-import { useEffect } from "react";
-import { toast } from "sonner";
 import axiosInstance from "@/lib/axios";
 import { authResponseSchema } from "@repo/types/responses";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/auth/oauthCallback")({
 	component: OAuthCallback,

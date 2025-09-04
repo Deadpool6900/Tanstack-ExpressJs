@@ -1,6 +1,6 @@
-import { Button } from "../ui/button";
 import { Share } from "lucide-react";
 import { ModeToggle } from "../blocks/theme-provider";
+import { Button } from "../ui/button";
 
 export const Navbar = () => {
 	return (
@@ -8,10 +8,10 @@ export const Navbar = () => {
 			<div className="text-md font-semibold ">TanStack templet</div>
 			<div className="space-x-4">
 				<Button variant={"outline"} className="h-8">
-                    <Share/>
-                    share
-                </Button>
-                <ModeToggle/>
+					<Share />
+					share
+				</Button>
+				<ModeToggle />
 			</div>
 		</div>
 	);

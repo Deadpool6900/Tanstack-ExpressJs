@@ -1,10 +1,10 @@
 // filepath: d:\TempletsRepos\vite-express-ts\apps\client\src\main.tsx
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
-import reportWebVitals from "./reportWebVitals.ts";
 import App from "./App.tsx"; // Import the App component
+import reportWebVitals from "./reportWebVitals.ts";
 import "./styles.css";
-import { router } from "./router";
+import type { router } from "./router";
 
 // Render the app
 const rootElement = document.getElementById("app");
@@ -13,7 +13,7 @@ if (rootElement && !rootElement.innerHTML) {
 	root.render(
 		<StrictMode>
 			<App />
-		</StrictMode>
+		</StrictMode>,
 	);
 }
 

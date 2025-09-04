@@ -1,8 +1,8 @@
-import { ApiError } from "../utils/ApiError";
+import type { User } from "@prisma/client";
 import type { NextFunction, Request, Response } from "express";
+import { ApiError } from "../utils/ApiError";
 import { getUserDataFromCookies } from "../utils/helper";
 import prisma from "../utils/prisma";
-import { type User } from "@prisma/client";
 
 interface AuthenticatedRequest extends Request {
 	user?: User;
@@ -10,7 +10,7 @@ interface AuthenticatedRequest extends Request {
 export const authMiddleware = async (
 	req: AuthenticatedRequest,
 	res: Response,
-	next: NextFunction
+	next: NextFunction,
 ) => {
 	try {
 		const userCookies = await getUserDataFromCookies(req);

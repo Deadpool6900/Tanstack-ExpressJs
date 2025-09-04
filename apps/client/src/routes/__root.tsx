@@ -1,10 +1,8 @@
+import { Toaster } from "@/components/ui/sonner";
+import type { authResponse } from "@repo/types/responses";
+import { TanstackDevtools } from "@tanstack/react-devtools";
 import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import { TanstackDevtools } from "@tanstack/react-devtools";
-import { Toaster } from "@/components/ui/sonner";
-import { type authResponse } from "@repo/types/responses";
-
-
 
 interface MyRouterContext {
 	// The ReturnType of your useAuth hook or the value of your AuthContext
@@ -33,5 +31,3 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 		</>
 	),
 });
-
-

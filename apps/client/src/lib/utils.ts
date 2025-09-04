@@ -1,7 +1,7 @@
-import { clsx, type ClassValue } from "clsx";
+import { authResponseSchema } from "@repo/types/responses";
+import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import axiosInstance from "./axios";
-import {authResponseSchema } from "@repo/types/responses";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));

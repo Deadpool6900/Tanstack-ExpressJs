@@ -1,33 +1,31 @@
-import type { Request, Response, NextFunction } from "express";
-import {
-	generateAuthToken,
-	getUserDataFromCookies,
-	hashMe,
-	verifyPwd,
-} from "../utils/helper";
-import { ApiError } from "../utils/ApiError";
-import prisma from "../utils/prisma";
-import { sendForgotPwdMail } from "../utils/emailHandler";
 import crypto from "node:crypto";
-
 import {
-	signupSchema,
-	type signupTypes,
+	forgotPwdSchema,
+	type forgotPwdType,
 	loginSchema,
 	type loginType,
 	resetPasswordSchema,
 	type resetPasswordType,
 	resetPwdWithToken,
 	type resetPwdWithTokenType,
-	forgotPwdSchema,
-	type forgotPwdType,
+	signupSchema,
+	type signupTypes,
 } from "@repo/types/auth";
-import passport from "passport";
+import type { Request, Response } from "express";
+import { ApiError } from "../utils/ApiError";
+import { sendForgotPwdMail } from "../utils/emailHandler";
+import {
+	generateAuthToken,
+	getUserDataFromCookies,
+	hashMe,
+	verifyPwd,
+} from "../utils/helper";
+import prisma from "../utils/prisma";
 
 //---------------------------------------------------------------------------------------------------
 export const signupfn = async (
 	req: Request<{}, {}, signupTypes>,
-	res: Response
+	res: Response,
 ) => {
 	const parsedData = signupSchema.safeParse(req.body);
 	if (!parsedData.success) {
@@ -35,7 +33,7 @@ export const signupfn = async (
 			400,
 			"Validation failed",
 			"VALIDATION_ERROR",
-			parsedData.error.issues
+			parsedData.error.issues,
 		);
 	}
 	// check user exits
@@ -66,7 +64,7 @@ export const signupfn = async (
 //---------------------------------------------------------------------------------------------------
 export const loginfn = async (
 	req: Request<{}, {}, loginType>,
-	res: Response
+	res: Response,
 ) => {
 	const parsedData = loginSchema.safeParse(req.body);
 	if (!parsedData.success) {
@@ -74,7 +72,7 @@ export const loginfn = async (
 			400,
 			"Validation failed",
 			"VALIDATION_ERROR",
-			parsedData.error.issues
+			parsedData.error.issues,
 		);
 	}
 	// if user exits :
@@ -88,7 +86,7 @@ export const loginfn = async (
 	//check password :
 	const isvalid = await verifyPwd(
 		parsedData.data.password,
-		user.password as string
+		user.password as string,
 	);
 	if (!isvalid) {
 		throw new ApiError(401, "Password is incorect try again", "INCORRECT_PWD");
@@ -102,27 +100,6 @@ export const loginfn = async (
 	});
 };
 //---------------------------------------------------------------------------------------------------
-
-// export const logout = (req: Request, res: Response) => {
-// 	// JWT logout (stateless)
-// 	res.clearCookie("accessToken", {
-// 		httpOnly: true,
-// 		secure: process.env.NODE_ENV === "production",
-// 		path: "/",
-// 	});
-
-// 	// Optional: If using refresh tokens, clear them too
-// 	res.clearCookie("refreshToken", {
-// 		httpOnly: true,
-// 		secure: process.env.NODE_ENV === "production",
-// 		path: "/",
-// 	});
-
-// 	res.json({
-// 		success: true,
-// 		message: "Logged out (JWT) successfully",
-// 	});
-// };
 
 export const logout = async (req: Request, res: Response) => {
 	// If Passport (OAuth) session exists
@@ -199,7 +176,7 @@ export const deleteAccount = async (req: Request, res: Response) => {
 //---------------------------------------------------------------------------------------------------
 export const ResetPassword = async (
 	req: Request<{}, {}, resetPasswordType>,
-	res: Response
+	res: Response,
 ) => {
 	const decodedUser = await getUserDataFromCookies(req);
 	const usr = await prisma.user.findUnique({
@@ -214,20 +191,20 @@ export const ResetPassword = async (
 			400,
 			"Validation failed",
 			"VALIDATION_ERROR",
-			parsedData.error.issues
+			parsedData.error.issues,
 		);
 	}
 
 	// check if old password = currect password 😑
 	const isValid = await verifyPwd(
 		parsedData.data.currentPwd,
-		usr.password as string
+		usr.password as string,
 	);
 	if (!isValid) {
 		throw new ApiError(
 			401,
 			"Current password is incorrect",
-			"INVALID_CREDENTIALS"
+			"INVALID_CREDENTIALS",
 		);
 	}
 
@@ -248,7 +225,7 @@ export const ResetPassword = async (
 //---------------------------------------------------------------------------------------------------
 export const ForgotPassword = async (
 	req: Request<{}, {}, forgotPwdType>,
-	res: Response
+	res: Response,
 ) => {
 	const parsedData = forgotPwdSchema.safeParse(req.body);
 	if (!parsedData.success) {
@@ -256,7 +233,7 @@ export const ForgotPassword = async (
 			400,
 			"Validation failed",
 			"VALIDATION_ERROR",
-			parsedData.error.issues
+			parsedData.error.issues,
 		);
 	}
 	const usr = await prisma.user.findUnique({
@@ -289,7 +266,7 @@ export const ForgotPassword = async (
 //---------------------------------------------------------------------------------------------------
 export const resetPasswordWithToken = async (
 	req: Request<{}, {}, resetPwdWithTokenType>,
-	res: Response
+	res: Response,
 ) => {
 	const parsedData = resetPwdWithToken.safeParse(req.body);
 	if (!parsedData.success) {
@@ -297,7 +274,7 @@ export const resetPasswordWithToken = async (
 			400,
 			"Validation failed",
 			"VALIDATION_ERROR",
-			parsedData.error.issues
+			parsedData.error.issues,
 		);
 	}
 	const { token, newPassword } = parsedData.data;
@@ -339,7 +316,7 @@ export const googleCallback = (req: Request, res: Response) => {
 	}
 	const { token } = generateAuthToken(
 		{ username: req.user.username, email: req.user.email },
-		res
+		res,
 	);
 	res.redirect(`http://localhost:3000/auth/oauthCallback?token=${token}`);
 };

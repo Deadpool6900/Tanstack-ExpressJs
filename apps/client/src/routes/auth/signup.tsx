@@ -1,18 +1,23 @@
+import { useAuth } from "@/auth";
+import { ModeToggle } from "@/components/blocks/theme-provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import logo from "@/templet logo.svg";
 import axiosInstance from "@/lib/axios";
-import { toast } from "sonner";
-import { AxiosError } from "axios";
-import { useAuth } from "@/auth";
-import { loginResSchema } from "@repo/types/responses";
-import { signupSchema, type signupTypes } from "@repo/types/auth";
 import { cn } from "@/lib/utils";
-import { ModeToggle } from "@/components/blocks/theme-provider";
+import logo from "@/templet logo.svg";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signupSchema, type signupTypes } from "@repo/types/auth";
+import { loginResSchema } from "@repo/types/responses";
+import {
+	Link,
+	createFileRoute,
+	redirect,
+	useNavigate,
+} from "@tanstack/react-router";
+import { AxiosError } from "axios";
+import { type SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/auth/signup")({
 	component: SignupComponent,
@@ -68,9 +73,9 @@ function SignupComponent() {
 
 	return (
 		<div className="grid min-h-svh lg:grid-cols-2 relative">
-		<div className="absolute top-4 right-4">
-						<ModeToggle />
-					</div>
+			<div className="absolute top-4 right-4">
+				<ModeToggle />
+			</div>
 			<div className="flex flex-col gap-4 p-6 md:p-10">
 				<div className="flex justify-center gap-2 md:justify-start">
 					<Link to="/" className="flex items-center gap-2 font-medium">
@@ -170,7 +175,7 @@ function SignupComponent() {
 			<div
 				className={cn(
 					"min-h-screen bg-[size:16px_16px]",
-					"bg-[radial-gradient(var(--dots)_1px,transparent_1px)]"
+					"bg-[radial-gradient(var(--dots)_1px,transparent_1px)]",
 				)}
 			></div>
 		</div>

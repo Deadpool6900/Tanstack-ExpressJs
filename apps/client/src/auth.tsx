@@ -1,92 +1,92 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import type { authResponse } from "@repo/types/responses";
+import type React from "react";
+import {
+	createContext,
+	useCallback,
+	useContext,
+	useEffect,
+	useState,
+} from "react";
 import { fetchUser } from "./lib/utils";
-import { type authResponse } from "@repo/types/responses";
-
-
-
-
 
 interface AuthState {
-    isAuthenticated: boolean;
-    user: authResponse["user"] | null;
-    login: (user: authResponse["user"], token: string) => void;
-    Oauthlogin: (user: authResponse["user"], token: string) => void;
-    logout: () => void;
+	isAuthenticated: boolean;
+	user: authResponse["user"] | null;
+	login: (user: authResponse["user"], token: string) => void;
+	Oauthlogin: (user: authResponse["user"], token: string) => void;
+	logout: () => void;
 }
 
 const AuthContext = createContext<AuthState | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const [user, setUser] = useState<authResponse["user"] | null>(null);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
+	const [user, setUser] = useState<authResponse["user"] | null>(null);
+	const [isAuthenticated, setIsAuthenticated] = useState(false);
+	const [isLoading, setIsLoading] = useState(true);
 
-    const login = useCallback((userData: authResponse["user"], token: string) => {
-        setUser(userData);
-        setIsAuthenticated(true);
-        localStorage.setItem("accessToken", token);
-    }, []);
-    
-    const Oauthlogin = useCallback(
-			(userData: authResponse["user"], token: string) => {
-				setUser(userData);
-				setIsAuthenticated(true);
-				localStorage.setItem("accessToken", token);
-			},
-			[]
+	const login = useCallback((userData: authResponse["user"], token: string) => {
+		setUser(userData);
+		setIsAuthenticated(true);
+		localStorage.setItem("accessToken", token);
+	}, []);
+
+	const Oauthlogin = useCallback(
+		(userData: authResponse["user"], token: string) => {
+			setUser(userData);
+			setIsAuthenticated(true);
+			localStorage.setItem("accessToken", token);
+		},
+		[],
+	);
+
+	const logout = useCallback(() => {
+		setUser(null);
+		setIsAuthenticated(false);
+		localStorage.removeItem("accessToken");
+	}, []);
+
+	// Restore auth state on app load
+	useEffect(() => {
+		const token = localStorage.getItem("accessToken");
+		if (token) {
+			// Validate token with your API
+			fetchUser()
+				.then((res) => res.user)
+				.then((userData) => {
+					if (userData) {
+						login(userData, token);
+					} else {
+						logout();
+					}
+				})
+				.catch(() => {
+					logout();
+				})
+				.finally(() => {
+					setIsLoading(false);
+				});
+		} else {
+			setIsLoading(false);
+		}
+	}, [login, logout]);
+
+	// Show loading state while checking auth
+	if (isLoading) {
+		return (
+			<div className="flex items-center justify-center min-h-screen">
+				Loading...
+			</div>
 		);
+	}
 
-    const logout = useCallback(() => {
-        setUser(null);
-        setIsAuthenticated(false);
-        localStorage.removeItem("accessToken");
-    }, []);
-
-    // Restore auth state on app load
-    useEffect(() => {
-        const token = localStorage.getItem("accessToken");
-        if (token) {
-            // Validate token with your API
-            fetchUser()
-                .then((res) => res.user)
-                .then((userData) => {
-                    if (userData) {
-                        login(userData, token);
-                    } else {
-                        logout();
-                    }
-                })
-                .catch(() => {
-                    logout();
-                })
-                .finally(() => {
-                    setIsLoading(false);
-                });
-        } else {
-            setIsLoading(false);
-        }
-    }, [login, logout]);
-
-    // Show loading state while checking auth
-    if (isLoading) {
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-                Loading...
-            </div>
-        );
-    }
-
-
-    return (
-			<AuthContext.Provider
-				value={{ isAuthenticated, user, login, logout, Oauthlogin }}
-			>
-				{children}
-			</AuthContext.Provider>
-		);
+	return (
+		<AuthContext.Provider
+			value={{ isAuthenticated, user, login, logout, Oauthlogin }}
+		>
+			{children}
+		</AuthContext.Provider>
+	);
 }
-
-
 
 export function useAuth() {
 	const context = useContext(AuthContext);

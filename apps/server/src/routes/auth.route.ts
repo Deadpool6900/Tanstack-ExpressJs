@@ -1,4 +1,5 @@
 import { Router } from "express";
+import passport from "passport";
 import {
 	deleteAccount,
 	ForgotPassword,
@@ -9,9 +10,9 @@ import {
 	resetPasswordWithToken,
 	signupfn,
 } from "../controllers/auth.controller";
-import { asyncHandler } from "../utils/helper";
 import { authMiddleware } from "../middleware/auth.middleware";
-import passport from "passport";
+import { asyncHandler } from "../utils/helper";
+
 const r = Router();
 export { r as authRouter };
 
@@ -26,12 +27,12 @@ r.post("/forgotPassword", authMiddleware, asyncHandler(ForgotPassword));
 r.post(
 	"/resetPasswordWithToken",
 	authMiddleware,
-	asyncHandler(resetPasswordWithToken)
+	asyncHandler(resetPasswordWithToken),
 );
 
 r.get(
 	"/google",
-	passport.authenticate("google", { scope: ["profile", "email"] })
+	passport.authenticate("google", { scope: ["profile", "email"] }),
 );
 r.get(
 	"/google/callback",
@@ -39,5 +40,5 @@ r.get(
 		failureRedirect: "http://localhost:3000/auth/login",
 		session: false,
 	}),
-	googleCallback
+	googleCallback,
 );
