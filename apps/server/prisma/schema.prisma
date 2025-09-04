@@ -7,17 +7,22 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+enum AuthProvider {
+  LOCAL
+  GOOGLE
+  GITHUB
+}
 
 model User {
   id          String          @id @default(cuid())
   email       String          @unique
-  password    String
+  password    String?
   username    String
   pfpUrl      String?         @map("pfp_url")
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
   resetTokens PwdResetToken[]
-  forms       Form[]
+  authProviders AuthProvider[]
 }
 
 model PwdResetToken {
@@ -30,32 +35,3 @@ model PwdResetToken {
   createdAt DateTime @default(now())
 }
 
-model Form {
-  id          String     @id @default(cuid())
-  title       String
-  description String?
-  owner       User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  ownerId     String
-  questions   Question[]
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-}
-
-enum QuestionType {
-  SHORT_ANSWER
-  MULTIPLE_CHOICE
-  CHECKBOXES
-  DROPDOWN
-  RATING
-}
-
-model Question {
-  id        String       @id @default(cuid())
-  question  String
-  answer    String?
-  type      QuestionType
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  form      Form         @relation(fields: [formId], references: [id], onDelete: Cascade)
-  formId    String
-}

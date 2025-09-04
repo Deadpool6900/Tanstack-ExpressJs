@@ -6,11 +6,12 @@ export const authResponseSchema = z.object({
 		.object({
 			id: z.string(),
 			email: z.email(),
-			password: z.string(),
+			password: z.string().nullable(),
 			username: z.string(),
 			pfpUrl: z.string().nullable().optional(),
 			createdAt: z.string().optional(),
 			updatedAt: z.string().optional(),
+			authProviders: z.array(z.enum(["LOCAL", "GOOGLE", "GITHUB"])),
 		})
 		.optional(),
 });

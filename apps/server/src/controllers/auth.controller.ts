@@ -1,5 +1,4 @@
-import type { Request, Response } from "express";
-import z from "zod";
+import type { Request, Response, NextFunction } from "express";
 import {
 	generateAuthToken,
 	getUserDataFromCookies,
@@ -23,6 +22,7 @@ import {
 	forgotPwdSchema,
 	type forgotPwdType,
 } from "@repo/types/auth";
+import passport from "passport";
 
 //---------------------------------------------------------------------------------------------------
 export const signupfn = async (
@@ -54,7 +54,7 @@ export const signupfn = async (
 	};
 	// db 👇
 	const createdUser = await prisma.user.create({
-		data: user,
+		data: { ...user, authProviders: ["LOCAL"] },
 	});
 	//jwt shit 👇
 	const t = generateAuthToken(user, res);
@@ -86,7 +86,10 @@ export const loginfn = async (
 	}
 
 	//check password :
-	const isvalid = await verifyPwd(parsedData.data.password, user.password);
+	const isvalid = await verifyPwd(
+		parsedData.data.password,
+		user.password as string
+	);
 	if (!isvalid) {
 		throw new ApiError(401, "Password is incorect try again", "INCORRECT_PWD");
 	}
@@ -99,14 +102,80 @@ export const loginfn = async (
 	});
 };
 //---------------------------------------------------------------------------------------------------
+
+// export const logout = (req: Request, res: Response) => {
+// 	// JWT logout (stateless)
+// 	res.clearCookie("accessToken", {
+// 		httpOnly: true,
+// 		secure: process.env.NODE_ENV === "production",
+// 		path: "/",
+// 	});
+
+// 	// Optional: If using refresh tokens, clear them too
+// 	res.clearCookie("refreshToken", {
+// 		httpOnly: true,
+// 		secure: process.env.NODE_ENV === "production",
+// 		path: "/",
+// 	});
+
+// 	res.json({
+// 		success: true,
+// 		message: "Logged out (JWT) successfully",
+// 	});
+// };
+
 export const logout = async (req: Request, res: Response) => {
-	res.clearCookie("accessToken", {
-		httpOnly: true,
-		secure: process.env.NODE_ENV === "production",
-		path: "/",
-	});
-	res.json({ success: true, message: "Logged out successfully" });
+	// If Passport (OAuth) session exists
+	if (req.isAuthenticated && req.isAuthenticated()) {
+		req.logOut((err) => {
+			if (err) {
+				res
+					.status(500)
+					.json({ success: false, message: "OAuth logout failed" });
+			}
+
+			req.session.destroy((sessionErr) => {
+				if (sessionErr) {
+					res
+						.status(500)
+						.json({ success: false, message: "Session logout failed" });
+				}
+
+				res.clearCookie("connect.sid");
+				res.clearCookie("accessToken", {
+					httpOnly: true,
+					secure: process.env.NODE_ENV === "production",
+					path: "/",
+				});
+
+				res.json({
+					success: true,
+					message: "Logged out (OAuth) successfully",
+				});
+			});
+		});
+	} else {
+		// JWT logout (stateless)
+		res.clearCookie("accessToken", {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === "production",
+			path: "/",
+		});
+
+		// Optional: If using refresh tokens, clear them too
+		res.clearCookie("refreshToken", {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === "production",
+			path: "/",
+		});
+
+		res.json({
+			success: true,
+			message: "Logged out (JWT) successfully",
+		});
+	}
 };
+
 //---------------------------------------------------------------------------------------------------
 export const deleteAccount = async (req: Request, res: Response) => {
 	const decoded = req.user;
@@ -150,7 +219,10 @@ export const ResetPassword = async (
 	}
 
 	// check if old password = currect password 😑
-	const isValid = await verifyPwd(parsedData.data.currentPwd, usr.password);
+	const isValid = await verifyPwd(
+		parsedData.data.currentPwd,
+		usr.password as string
+	);
 	if (!isValid) {
 		throw new ApiError(
 			401,
@@ -261,3 +333,13 @@ export const resetPasswordWithToken = async (
 	});
 };
 //---------------------------------------------------------------------------------------------------
+export const googleCallback = (req: Request, res: Response) => {
+	if (!req.user) {
+		return res.redirect("http://localhost:3000/auth/login");
+	}
+	const { token } = generateAuthToken(
+		{ username: req.user.username, email: req.user.email },
+		res
+	);
+	res.redirect(`http://localhost:3000/auth/oauthCallback?token=${token}`);
+};

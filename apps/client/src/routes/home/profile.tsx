@@ -4,11 +4,7 @@ import { AppSidebar } from "@/components/layout/Sidebar";
 import { Button } from "@/components/ui/button";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import axiosInstance from "@/lib/axios";
-import {
-	createFileRoute,
-	redirect,
-	useNavigate,
-} from "@tanstack/react-router";
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import type { AxiosResponse } from "axios";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
@@ -108,6 +104,7 @@ function RouteComponent() {
 			if (res.status == 200) {
 				toast.success("Account deleted successfully.");
 				logout();
+				navigate({ to: "/auth/login", replace: true });
 			} else {
 				toast.error(res.statusText);
 			}
@@ -131,13 +128,15 @@ function RouteComponent() {
 								<div className="flex items-start justify-between gap-6">
 									<div className="flex items-center gap-4">
 										<Avatar className="h-24 w-24 ring-2 ring-ring">
-											<AvatarImage src={user?.pfpUrl || ""} alt="avatar" />
-											<AvatarFallback>
-												{user?.username
-													.split(" ")
-													.map((name) => name[0])
-													.join("")}
-											</AvatarFallback>
+											<AvatarImage src={user?.pfpUrl as string} alt="avatar" />
+											{user?.pfpUrl == "" || user?.pfpUrl == null ? (
+												<AvatarFallback>
+													{user?.username
+														.split(" ")
+														.map((name) => name[0])
+														.join("")}
+												</AvatarFallback>
+											) : null}
 										</Avatar>
 										<div>
 											<h2 className="text-2xl font-semibold">
@@ -197,71 +196,74 @@ function RouteComponent() {
 									</div>
 									{/* -------------------------------------------------------------------------------------------------------- */}
 
-									<div className="mt-2 space-y-2 flex items-center justify-between  my-3">
-										<p className="">Reset password</p>
-										<Dialog>
-											<DialogTrigger asChild>
-												<Button
-													variant="outline"
-													size="sm"
-													className="flex items-center gap-2"
-												>
-													Reset
-												</Button>
-											</DialogTrigger>
-
-											<DialogContent>
-												<DialogHeader>
-													<DialogTitle className="flex items-center gap-2">
-														<LockKeyholeOpen size={16} />
-														Reset your password
-													</DialogTitle>
-
-													<DialogDescription>
-														Please enter your old and new password.
-													</DialogDescription>
-												</DialogHeader>
-
-												<form onSubmit={handleSubmit(onSubmit)} className="">
-													<div className="flex flex-col gap-4">
-														<Label>Old Password</Label>
-														<Input
-															type="password"
-															placeholder="*******"
-															{...register("currentPwd")}
-														/>
-														{errors.currentPwd && (
-															<p className="text-red-500">
-																{errors.currentPwd.message}
-															</p>
-														)}
-
-														<Label>New Password</Label>
-														<Input
-															type="password"
-															placeholder="*******"
-															{...register("newPwd")}
-														/>
-														{errors.newPwd && (
-															<p className="text-red-500">
-																{errors.newPwd.message}
-															</p>
-														)}
-													</div>
-
-													<Button type="submit" className="mt-4">
-														Confirm
+									{user?.authProviders?.includes("GOOGLE") ? null : (
+										<div className="mt-2 space-y-2 flex items-center justify-between  my-3">
+											<p className="">Reset password</p>
+											<Dialog>
+												<DialogTrigger asChild>
+													<Button
+														variant="outline"
+														size="sm"
+														className="flex items-center gap-2"
+													>
+														Reset
 													</Button>
-												</form>
-											</DialogContent>
-										</Dialog>
-									</div>
+												</DialogTrigger>
+
+												<DialogContent>
+													<DialogHeader>
+														<DialogTitle className="flex items-center gap-2">
+															<LockKeyholeOpen size={16} />
+															Reset your password
+														</DialogTitle>
+
+														<DialogDescription>
+															Please enter your old and new password.
+														</DialogDescription>
+													</DialogHeader>
+
+													<form onSubmit={handleSubmit(onSubmit)} className="">
+														<div className="flex flex-col gap-4">
+															<Label>Old Password</Label>
+															<Input
+																type="password"
+																placeholder="*******"
+																{...register("currentPwd")}
+															/>
+															{errors.currentPwd && (
+																<p className="text-red-500">
+																	{errors.currentPwd.message}
+																</p>
+															)}
+
+															<Label>New Password</Label>
+															<Input
+																type="password"
+																placeholder="*******"
+																{...register("newPwd")}
+															/>
+															{errors.newPwd && (
+																<p className="text-red-500">
+																	{errors.newPwd.message}
+																</p>
+															)}
+														</div>
+
+														<Button type="submit" className="mt-4">
+															Confirm
+														</Button>
+													</form>
+												</DialogContent>
+											</Dialog>
+										</div>
+									)}
 
 									{/* -------------------------------------------------------------------------------------------------------- */}
 									<div className="mt-2 space-y-2 flex items-center justify-between  my-3">
 										<div className=" flex items-center justify-center gap-2 text-destructive">
 											<Trash2 size={20} strokeWidth={1} />
-											Delete your account</div>
+											Delete your account
+										</div>
 										<Dialog>
 											<DialogTrigger asChild>
 												<Button

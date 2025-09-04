@@ -10,7 +10,7 @@ interface AuthenticatedRequest extends Request {
 export const authMiddleware = async (
 	req: AuthenticatedRequest,
 	res: Response,
-	next: NextFunction,
+	next: NextFunction
 ) => {
 	try {
 		const userCookies = await getUserDataFromCookies(req);

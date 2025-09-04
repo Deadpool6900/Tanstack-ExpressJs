@@ -1,26 +1,40 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
-import { fetchUser, type AuthResponse } from "./lib/utils";
+import { fetchUser } from "./lib/utils";
+import { type authResponse } from "@repo/types/responses";
+
+
+
 
 
 interface AuthState {
     isAuthenticated: boolean;
-    user: AuthResponse["user"] | null;
-    login: (user: AuthResponse["user"], token: string) => void;
+    user: authResponse["user"] | null;
+    login: (user: authResponse["user"], token: string) => void;
+    Oauthlogin: (user: authResponse["user"], token: string) => void;
     logout: () => void;
 }
 
 const AuthContext = createContext<AuthState | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const [user, setUser] = useState<AuthResponse["user"] | null>(null);
+    const [user, setUser] = useState<authResponse["user"] | null>(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
-    const login = useCallback((userData: AuthResponse["user"], token: string) => {
+    const login = useCallback((userData: authResponse["user"], token: string) => {
         setUser(userData);
         setIsAuthenticated(true);
         localStorage.setItem("accessToken", token);
     }, []);
+    
+    const Oauthlogin = useCallback(
+			(userData: authResponse["user"], token: string) => {
+				setUser(userData);
+				setIsAuthenticated(true);
+				localStorage.setItem("accessToken", token);
+			},
+			[]
+		);
 
     const logout = useCallback(() => {
         setUser(null);
@@ -64,10 +78,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
-            {children}
-        </AuthContext.Provider>
-    );
+			<AuthContext.Provider
+				value={{ isAuthenticated, user, login, logout, Oauthlogin }}
+			>
+				{children}
+			</AuthContext.Provider>
+		);
 }
 
 

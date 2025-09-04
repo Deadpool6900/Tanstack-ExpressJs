@@ -65,6 +65,10 @@ function LoginComponent() {
 			}
 		}
 	};
+	const handleGoogleLogin = () => {
+		// Redirects to your backend OAuth route
+		window.location.href = "http://localhost:5001/auth/google";
+	};
 
 	// ---------------------------------------------------------------------------------
 
@@ -85,7 +89,7 @@ function LoginComponent() {
 				<div className="flex flex-1 items-center justify-center">
 					<div className="w-full max-w-xs">
 						<form
-							className={"flex flex-col gap-6"}
+							className={"flex flex-col gap-6 mb-4"}
 							onSubmit={handleSubmit(onSubmit)}
 						>
 							<div className="flex flex-col items-center gap-2 text-center">
@@ -137,21 +141,25 @@ function LoginComponent() {
 										Or continue with
 									</span>
 								</div>
-								<Button variant="outline" className="w-full">
-									<img
-										src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg"
-										alt="Google logo"
-									/>
-									Login with Google
-								</Button>
-							</div>
-							<div className="text-center text-sm">
-								Don&apos;t have an account?{" "}
-								<Link to="/auth/signup" className="underline underline-offset-4">
-									Sign up
-								</Link>
 							</div>
 						</form>
+						<Button
+							variant="outline"
+							className="w-full"
+							onClick={handleGoogleLogin}
+						>
+							<img
+								src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg"
+								alt="Google logo"
+							/>
+							Login with Google
+						</Button>
+						<div className="text-center text-sm mt-2">
+							Don&apos;t have an account?{" "}
+							<Link to="/auth/signup" className="underline underline-offset-4">
+								Sign up
+							</Link>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -159,7 +167,8 @@ function LoginComponent() {
 			<div
 				className={cn(
 					"min-h-screen bg-[size:16px_16px]",
-					"bg-[radial-gradient(var(--dots)_1px,transparent_1px)]"
+					"bg-[radial-gradient(var(--dots)_1px,transparent_1px)]",
+					"hidden md:flex"
 				)}
 			></div>
 		</div>
