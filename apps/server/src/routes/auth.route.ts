@@ -12,9 +12,12 @@ import {
 } from "../controllers/auth.controller";
 import { authMiddleware } from "../middleware/auth.middleware";
 import { asyncHandler } from "../utils/helper";
+import { authRateLimiter } from "../utils/RateLimiter";
 
 const r = Router();
 export { r as authRouter };
+
+r.use(authRateLimiter);
 
 // signup login logout change password forgot password
 
