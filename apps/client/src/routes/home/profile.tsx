@@ -57,8 +57,7 @@ function RouteComponent() {
 	const handleLogout = async () => {
 		try {
 			const res: AxiosResponse = await axiosInstance.post("/auth/logout");
-
-			console.log(res);
+			// console.log(res);
 
 			if (res.status == 200) {
 				logout();

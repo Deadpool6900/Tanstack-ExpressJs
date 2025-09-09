@@ -14,7 +14,7 @@ import { AxiosError } from "axios";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { cn } from "@/lib/utils";
+import { baseServerUrl, cn } from "@/lib/utils";
 export const Route = createFileRoute("/auth/login")({
 	component: LoginComponent,
 	beforeLoad: ({ context }) => {
@@ -67,7 +67,7 @@ function LoginComponent() {
 	};
 	const handleGoogleLogin = () => {
 		// Redirects to your backend OAuth route
-		window.location.href = "http://localhost:5001/auth/google";
+		window.location.href = `${baseServerUrl}/auth/google`;
 	};
 
 	// ---------------------------------------------------------------------------------

@@ -5,12 +5,9 @@ import cors from "cors";
 import { config } from "dotenv";
 import express, {
 	json,
-	type Request,
-	type Response,
 	urlencoded,
 } from "express";
 import session from "express-session";
-import jwt from "jsonwebtoken";
 import passport from "passport";
 import {
 	Strategy as GoogleStrategy,
@@ -20,6 +17,7 @@ import { errorMiddleware } from "./middleware/Error.middleware";
 import { authRouter } from "./routes/auth.route";
 import { userRouter } from "./routes/user.route";
 import prisma from "./utils/prisma";
+import { baseClientUrl, baseServerUrl } from "./utils/helper";
 
 declare global {
 	namespace Express {
@@ -27,6 +25,18 @@ declare global {
 	}
 }
 config();
+// This function checks if certain required environment variables are set before your application runs.
+const requiredEnvVars = [
+	"JWT_SECRET_KEY",
+	"DATABASE_URL",
+	"GOOGLE_CLIENT_ID",
+	"SERVER_PORT",
+];
+requiredEnvVars.forEach((envVar) => {
+	if (!process.env[envVar]) {
+		throw new Error(`Missing required environment variable: ${envVar}`);
+	}
+});
 
 const app = express();
 app.use(cookieParser());
@@ -34,7 +44,7 @@ app.use(urlencoded({ extended: true }));
 app.use(json({ limit: "5mb" }));
 app.use(
 	cors({
-		origin: "http://localhost:3000",
+		origin: baseClientUrl,
 		credentials: true,
 	}),
 );
@@ -46,10 +56,10 @@ app.use(
 		saveUninitialized: false,
 		cookie: {
 			httpOnly: true,
-			secure: false, // set true in production with HTTPS
+			secure: process.env.NODE_ENV === "production",
 			sameSite: "lax",
 		},
-	}),
+	})
 );
 // Initialize passport
 app.use(passport.initialize());
@@ -75,7 +85,7 @@ passport.use(
 		{
 			clientID: process.env.GOOGLE_CLIENT_ID as string,
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-			callbackURL: "http://localhost:5001/auth/google/callback",
+			callbackURL: `${baseServerUrl}/auth/google/callback`,
 		},
 		async (accessToken, refreshToken, profile: Profile, done) => {
 			try {
@@ -116,11 +126,11 @@ app.use("/auth", authRouter);
 app.use("/user", userRouter);
 
 app.use(errorMiddleware);
-app.listen(5001, () =>
+app.listen(process.env.SERVER_PORT || 5001, () =>
 	console.log(
 		"app is running on",
 		"\x1b[31m%s\x1b[0m",
-		" http://localhost:5001",
+		baseServerUrl,
 	),
 );
 // that regex is for cool color

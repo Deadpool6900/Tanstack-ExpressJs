@@ -15,6 +15,7 @@ import type { Request, Response } from "express";
 import { ApiError } from "../utils/ApiError";
 import { sendForgotPwdMail } from "../utils/emailHandler";
 import {
+	baseClientUrl,
 	generateAuthToken,
 	getUserDataFromCookies,
 	hashMe,
@@ -25,7 +26,7 @@ import prisma from "../utils/prisma";
 //---------------------------------------------------------------------------------------------------
 export const signupfn = async (
 	req: Request<{}, {}, signupTypes>,
-	res: Response,
+	res: Response
 ) => {
 	const parsedData = signupSchema.safeParse(req.body);
 	if (!parsedData.success) {
@@ -33,7 +34,7 @@ export const signupfn = async (
 			400,
 			"Validation failed",
 			"VALIDATION_ERROR",
-			parsedData.error.issues,
+			parsedData.error.issues
 		);
 	}
 	// check user exits
@@ -64,7 +65,7 @@ export const signupfn = async (
 //---------------------------------------------------------------------------------------------------
 export const loginfn = async (
 	req: Request<{}, {}, loginType>,
-	res: Response,
+	res: Response
 ) => {
 	const parsedData = loginSchema.safeParse(req.body);
 	if (!parsedData.success) {
@@ -72,7 +73,7 @@ export const loginfn = async (
 			400,
 			"Validation failed",
 			"VALIDATION_ERROR",
-			parsedData.error.issues,
+			parsedData.error.issues
 		);
 	}
 	// if user exits :
@@ -86,17 +87,17 @@ export const loginfn = async (
 	//check password :
 	const isvalid = await verifyPwd(
 		parsedData.data.password,
-		user.password as string,
+		user.password as string
 	);
 	if (!isvalid) {
 		throw new ApiError(401, "Password is incorect try again", "INCORRECT_PWD");
 	}
 
 	//jwt shit 👇
-	const t = generateAuthToken(user, res);
+	const {token} = generateAuthToken(user, res);
 	return res.status(200).json({
 		user: user,
-		token: t.token,
+		token: token,
 	});
 };
 //---------------------------------------------------------------------------------------------------
@@ -176,13 +177,13 @@ export const deleteAccount = async (req: Request, res: Response) => {
 //---------------------------------------------------------------------------------------------------
 export const ResetPassword = async (
 	req: Request<{}, {}, resetPasswordType>,
-	res: Response,
+	res: Response
 ) => {
 	const decodedUser = await getUserDataFromCookies(req);
-	const usr = await prisma.user.findUnique({
+	const user = await prisma.user.findUnique({
 		where: { email: decodedUser.email },
 	});
-	if (!usr) {
+	if (!user) {
 		throw new ApiError(404, "User not found", "USER_NOT_FOUND");
 	}
 	const parsedData = resetPasswordSchema.safeParse(req.body);
@@ -191,26 +192,26 @@ export const ResetPassword = async (
 			400,
 			"Validation failed",
 			"VALIDATION_ERROR",
-			parsedData.error.issues,
+			parsedData.error.issues
 		);
 	}
 
 	// check if old password = currect password 😑
 	const isValid = await verifyPwd(
 		parsedData.data.currentPwd,
-		usr.password as string,
+		user.password as string
 	);
 	if (!isValid) {
 		throw new ApiError(
 			401,
 			"Current password is incorrect",
-			"INVALID_CREDENTIALS",
+			"INVALID_CREDENTIALS"
 		);
 	}
 
 	const hashedPwd = await hashMe(parsedData.data.newPwd);
 	await prisma.user.update({
-		where: { email: usr.email },
+		where: { email: user.email },
 		data: {
 			password: hashedPwd,
 		},
@@ -219,13 +220,13 @@ export const ResetPassword = async (
 	return res.json({
 		success: true,
 		message: "password reset successfully",
-		usr,
+		user,
 	});
 };
 //---------------------------------------------------------------------------------------------------
 export const ForgotPassword = async (
 	req: Request<{}, {}, forgotPwdType>,
-	res: Response,
+	res: Response
 ) => {
 	const parsedData = forgotPwdSchema.safeParse(req.body);
 	if (!parsedData.success) {
@@ -233,31 +234,31 @@ export const ForgotPassword = async (
 			400,
 			"Validation failed",
 			"VALIDATION_ERROR",
-			parsedData.error.issues,
+			parsedData.error.issues
 		);
 	}
-	const usr = await prisma.user.findUnique({
+	const user = await prisma.user.findUnique({
 		where: {
 			email: parsedData.data.email,
 		},
 	});
-	if (!usr) {
+	if (!user) {
 		throw new ApiError(404, "User not found", "USER_NOT_FOUND");
 	}
 	const resetToken = crypto.randomBytes(32).toString("hex");
 	const tokenExpiry = new Date(Date.now() + 1000 * 60 * 15); // 15 mins
 	await prisma.pwdResetToken.deleteMany({
-		where: { userId: usr.id },
+		where: { userId: user.id },
 	});
 	await prisma.pwdResetToken.create({
 		data: {
 			token: resetToken,
 			expiresAt: tokenExpiry,
-			userId: usr.id,
+			userId: user.id,
 		},
 	});
-	const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
-	await sendForgotPwdMail(usr.email, resetLink);
+	const resetLink = `${baseClientUrl}/reset-password?token=${resetToken}`;
+	await sendForgotPwdMail(user.email, resetLink);
 	return res.json({
 		success: true,
 		message: "password reset link has been sent on the Email.",
@@ -266,7 +267,7 @@ export const ForgotPassword = async (
 //---------------------------------------------------------------------------------------------------
 export const resetPasswordWithToken = async (
 	req: Request<{}, {}, resetPwdWithTokenType>,
-	res: Response,
+	res: Response
 ) => {
 	const parsedData = resetPwdWithToken.safeParse(req.body);
 	if (!parsedData.success) {
@@ -274,7 +275,7 @@ export const resetPasswordWithToken = async (
 			400,
 			"Validation failed",
 			"VALIDATION_ERROR",
-			parsedData.error.issues,
+			parsedData.error.issues
 		);
 	}
 	const { token, newPassword } = parsedData.data;
@@ -286,7 +287,7 @@ export const resetPasswordWithToken = async (
 
 	if (
 		!resetRecord ||
-		resetRecord.Isused ||
+		resetRecord.isUsed ||
 		resetRecord.expiresAt < new Date()
 	) {
 		throw new ApiError(400, "Invalid or expired reset token", "UNAUTHORISED");
@@ -301,7 +302,7 @@ export const resetPasswordWithToken = async (
 	// Make token expire by isUsed = true
 	await prisma.pwdResetToken.update({
 		where: { id: resetRecord.id },
-		data: { Isused: true },
+		data: { isUsed: true },
 	});
 
 	return res.json({
@@ -312,11 +313,11 @@ export const resetPasswordWithToken = async (
 //---------------------------------------------------------------------------------------------------
 export const googleCallback = (req: Request, res: Response) => {
 	if (!req.user) {
-		return res.redirect("http://localhost:3000/auth/login");
+		return res.redirect(`${baseClientUrl}/auth/login`);
 	}
 	const { token } = generateAuthToken(
 		{ username: req.user.username, email: req.user.email },
-		res,
+		res
 	);
-	res.redirect(`http://localhost:3000/auth/oauthCallback?token=${token}`);
+	res.redirect(`${baseClientUrl}/auth/oauthCallback?token=${token}`);
 };

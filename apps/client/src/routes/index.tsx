@@ -10,9 +10,6 @@ import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
 	component: App,
-	loader: ({ context }) => {
-		console.log(context.auth);
-	},
 });
 
 function App() {

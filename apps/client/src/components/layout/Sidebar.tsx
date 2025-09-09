@@ -112,7 +112,7 @@ export function AppSidebar({ userdata }: { userdata: authResponse["user"] }) {
 						) : (
 							<AvatarFallback className="bg-foreground/15">
 								{user?.username && user?.username
-									.split("")
+									.split(" ")
 									.map((n) => n[0])
 									.join("")
 									.toUpperCase()}

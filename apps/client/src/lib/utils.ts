@@ -20,3 +20,8 @@ export const fetchUser = async () => {
 		return { success: false, user: null };
 	}
 };
+
+export const baseServerUrl =
+	import.meta.env.MODE === "development"
+		? "http://localhost:5001"
+		: import.meta.env.VITE_SERVER_URL;

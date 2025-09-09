@@ -29,7 +29,7 @@ model PwdResetToken {
   id        String   @id @default(cuid())
   token     String   @unique
   expiresAt DateTime
-  Isused    Boolean  @default(false)
+  isUsed    Boolean  @default(false)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
   createdAt DateTime @default(now())

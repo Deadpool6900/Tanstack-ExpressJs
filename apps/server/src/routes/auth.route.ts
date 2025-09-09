@@ -11,7 +11,7 @@ import {
 	signupfn,
 } from "../controllers/auth.controller";
 import { authMiddleware } from "../middleware/auth.middleware";
-import { asyncHandler } from "../utils/helper";
+import { asyncHandler, baseClientUrl } from "../utils/helper";
 import { authRateLimiter } from "../utils/RateLimiter";
 
 const r = Router();
@@ -40,8 +40,8 @@ r.get(
 r.get(
 	"/google/callback",
 	passport.authenticate("google", {
-		failureRedirect: "http://localhost:3000/auth/login",
+		failureRedirect: `${baseClientUrl}/auth/login`,
 		session: false,
 	}),
-	googleCallback,
+	googleCallback
 );

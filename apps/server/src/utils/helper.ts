@@ -13,9 +13,9 @@ export const hashMe = async (pwd: string): Promise<string> => {
 //----------------------------------------------------------------------------
 export const verifyPwd = async (
 	pwd: string,
-	hashedpwd: string,
+	hashedpwd: string
 ): Promise<boolean> => {
-	return bcrypt.compareSync(pwd, hashedpwd);
+	return await bcrypt.compare(pwd, hashedpwd);
 };
 //----------------------------------------------------------------------------
 interface usrPayload {
@@ -24,7 +24,7 @@ interface usrPayload {
 }
 export const generateAuthToken = (
 	user: usrPayload,
-	res: Response,
+	res: Response
 ): { token: string } => {
 	const payload = {
 		username: user.username,
@@ -33,10 +33,10 @@ export const generateAuthToken = (
 
 	const token: string = jwt.sign(
 		payload,
-		process.env.JWT_SECRATE_KEY as string,
+		process.env.JWT_SECRET_KEY as string,
 		{
 			expiresIn: "3d",
-		},
+		}
 	);
 
 	res.cookie("accessToken", token, {
@@ -52,7 +52,7 @@ export const generateAuthToken = (
 };
 //----------------------------------------------------------------------------
 export const asyncHandler = (
-	fn: (req: Request, res: Response, next: NextFunction) => Promise<any>,
+	fn: (req: Request, res: Response, next: NextFunction) => Promise<any>
 ) => {
 	return async (req: Request, res: Response, next: NextFunction) => {
 		try {
@@ -68,7 +68,7 @@ interface CustomJwtPayload extends JwtPayload {
 	username: string;
 }
 export const getUserDataFromCookies = async (
-	req: Request,
+	req: Request
 ): Promise<CustomJwtPayload> => {
 	const token = req.cookies?.accessToken;
 	if (!token) {
@@ -77,14 +77,23 @@ export const getUserDataFromCookies = async (
 
 	const decoded = jwt.verify(
 		token,
-		process.env.JWT_SECRATE_KEY as string,
+		process.env.JWT_SECRET_KEY as string
 	) as CustomJwtPayload;
 	if (!decoded.email) {
 		throw new ApiError(
 			403,
 			"Invalid or expired access token",
-			"INVALID_ACCESS_TOKEN",
+			"INVALID_ACCESS_TOKEN"
 		);
 	}
 	return decoded;
 };
+
+export const baseClientUrl =
+	process.env.NODE_ENV === "production"
+		? process.env.CLIENT_URL
+		: ("http://localhost:3000" as string);
+export const baseServerUrl =
+	process.env.NODE_ENV === "production"
+		? process.env.SERVER_URL
+		: ("http://localhost:5001" as string);

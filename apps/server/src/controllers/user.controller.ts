@@ -8,20 +8,20 @@ export const getUserData = async (req: Request, res: Response) => {
 	if (!user) {
 		throw new ApiError(401, "Unauthorized", "UNAUTHORIZED");
 	}
-	const usr = await prisma.user.findUnique({
+	const userfromDb = await prisma.user.findUnique({
 		where: {
 			id: user.id,
 		},
 	});
-	if (!usr) {
+	if (!userfromDb) {
 		throw new ApiError(404, "User not found", "USER_NOT_FOUND");
 	}
-	return res.status(200).json({ success: true, user: usr });
+	return res.status(200).json({ success: true, user: userfromDb });
 };
 //-----------------------------------------------------------------------------------------
 export const UpdateUsername = async (
 	req: Request<{}, {}, { username: string }>,
-	res: Response,
+	res: Response
 ) => {
 	const user = req.user;
 	if (!user) {

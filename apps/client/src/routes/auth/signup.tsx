@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import axiosInstance from "@/lib/axios";
-import { cn } from "@/lib/utils";
+import { baseServerUrl, cn } from "@/lib/utils";
 import logo from "@/templet logo.svg";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signupSchema, type signupTypes } from "@repo/types/auth";
@@ -49,12 +49,11 @@ function SignupComponent() {
 		try {
 			const res = await axiosInstance.post("/auth/signup", data);
 			const parsed = loginResSchema.safeParse(res.data);
-			console.log(parsed);
 			if (!parsed.success) {
 				toast.error("Invalid response from server.");
 				return;
 			}
-			console.log(parsed.data);
+			// console.log(parsed.data);
 			login(parsed.data.user, parsed.data.token);
 			toast.success("signup successful!");
 			navigate({ to: "/home", replace: true });
@@ -69,6 +68,10 @@ function SignupComponent() {
 			}
 		}
 	};
+		const handleGoogleLogin = () => {
+			// Redirects to your backend OAuth route
+			window.location.href = `${baseServerUrl}/auth/google`;
+		};
 	// ---------------------------------------------------------------------------------
 
 	return (
@@ -154,7 +157,11 @@ function SignupComponent() {
 										Or continue with
 									</span>
 								</div>
-								<Button variant="outline" className="w-full">
+								<Button
+									variant="outline"
+									className="w-full"
+									onClick={handleGoogleLogin}
+								>
 									<img
 										src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg"
 										alt="Google logo"
@@ -175,7 +182,7 @@ function SignupComponent() {
 			<div
 				className={cn(
 					"min-h-screen bg-[size:16px_16px]",
-					"bg-[radial-gradient(var(--dots)_1px,transparent_1px)]",
+					"bg-[radial-gradient(var(--dots)_1px,transparent_1px)]"
 				)}
 			></div>
 		</div>

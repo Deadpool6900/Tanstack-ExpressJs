@@ -2,7 +2,7 @@
 
 This is the backend server for the application, built with [Bun](https://bun.sh), Express, Prisma ORM ,Zod and TypeScript .
 
-**Note:** This specific folder is a part of a turborepo, if you aren't using turborepo plz add types manually from `@types/` packages. 
+**Note:** This specific folder is a part of a turborepo, if you aren't using turborepo plz add types manually from `@types/` packages.
 
 ---
 
@@ -29,7 +29,7 @@ This project requires several environment variables to run correctly. Create a `
 DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE?schema=public"
 
 # --- AUTHENTICATION ---
-JWT_SECRATE_KEY="your-super-secret-jwt-key"
+JWT_SECRET_KEY="your-super-secret-jwt-key"
 SESSION_SECRET="your-super-secret-session-key"
 
 # --- GOOGLE OAUTH ---
@@ -41,7 +41,7 @@ GMAIL="your-email@gmail.com"
 GOOGLE_APP_PASSWORD="your-google-app-password"
 
 # --- CLIENT ---
-FRONTEND_URL="http://localhost:3000"
+CLIENT_URL="http://localhost:3000"
 ```
 
 **Note:** plz replace the placeholder (you might forgot 😅)
@@ -60,10 +60,10 @@ The server will be running on the port either specified or 5001.
 
 ## 🐰 Available Scripts
 
--   `bun run dev`: Starts the development server with hot-reloading.
--   `bun run test`: Runs the test suite using Vitest.
--   `bun run lint`: Checks the code for formatting and linting issues with Biome.
--   `bun run lint:fix`: Automatically fixes linting and formatting issues.
+- `bun run dev`: Starts the development server with hot-reloading.
+- `bun run test`: Runs the test suite using Vitest.
+- `bun run lint`: Checks the code for formatting and linting issues with Biome.
+- `bun run lint:fix`: Automatically fixes linting and formatting issues.
 
 **Note:** plz dont use lint:fix without reviewing the changes first it will cause unexpected shit .
 
@@ -91,4 +91,4 @@ apps/server/
 
 This project uses [Biome](https://biomejs.dev/) for linting and formatting to ensure code consistency and quality. You can check your code by running `bun run lint`.
 
-made with ❤️ by @Kedar0023_
+made with ❤️ by @Kedar0023\_
